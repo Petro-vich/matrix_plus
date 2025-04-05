@@ -11,11 +11,13 @@ class S21Matrix {
       double **matrix_;
 
   public:
+/*=======================================SET/GET==========================================*/
 
       int get_rows();
       int get_col();
       void set_rows(int rows);
       void set_cols(int cols);
+
 /*===================================Default constructor===================================*/
       S21Matrix() noexcept;
       S21Matrix(int rows, int cols);
@@ -53,5 +55,4 @@ class S21Matrix {
      void print_matrix();
 };
 
-  
 #endif
