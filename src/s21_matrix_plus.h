@@ -2,6 +2,7 @@
 #define S21_MATRIX_PLUS_H
 
 #include <iostream>
+#include <math.h>
 
 class S21Matrix {
   private:
@@ -27,6 +28,10 @@ class S21Matrix {
       void MulNumber(const double num);
       void MulMatrix(const S21Matrix& other);
       S21Matrix Transpose();
+      double Determinant();
+      S21Matrix CalcComplements();
+      S21Matrix GetMinor(const S21Matrix& matrix, int row, int col);
+      S21Matrix InverseMatrix();
 /*==================================Opeartor overload==========================================*/
       S21Matrix operator + (const S21Matrix& other);
       S21Matrix operator - (const S21Matrix& other);
@@ -40,12 +45,13 @@ class S21Matrix {
       
       bool operator == (const S21Matrix& other);
       S21Matrix operator = (const S21Matrix& other);
-
+      double &operator () (int i, int j);
+      double operator()(int i, int j) const;
 /*======================================Helpers================================================*/
+     void SwapRows(int row1, int row2);
      void filling_matrix();
      void print_matrix();
 };
-
 
   
 #endif

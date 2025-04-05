@@ -1,11 +1,14 @@
 #include "s21_matrix_plus.h"
 #include <iostream>
 
-/*=======================================SET/GET==========================================*/
 
+/*=======================================SET/GET==========================================*/
 int S21Matrix::get_rows() {return this->rows_;}
+
 int S21Matrix::get_col() {return this->cols_;}
+
 void S21Matrix::set_rows(int rows) {this->rows_ = rows;}
+
 void S21Matrix::set_cols(int cols) {this-> rows_ = cols;}
 /*===================================Default constructor===================================*/
 
@@ -48,7 +51,6 @@ S21Matrix::S21Matrix(const S21Matrix &other) :
 }
 
 /*===================================Operations on matrices================================*/
-
 bool S21Matrix::EqMatrix(const S21Matrix& other) {
   bool status;
   for (int i = 0; i < rows_; i++) {
@@ -63,16 +65,6 @@ bool S21Matrix::EqMatrix(const S21Matrix& other) {
   }
   return status;
 }
-
-void S21Matrix::filling_matrix() {
-    double count{};
-    for (int i = 0; i < rows_; i++) {
-      for (int j = 0; j < cols_; j++) { 
-        matrix_[i][j] = count;
-        count += 2;
-      }
-    }
-  }
 
 void S21Matrix::SumMatrix(const S21Matrix& other) {
   for (int i = 0; i < rows_; i++) {
@@ -124,6 +116,71 @@ S21Matrix S21Matrix::Transpose() {
 return temp; 
 }
 
+double S21Matrix::Determinant() {
+
+    if (rows_ != cols_) {
+        throw std::logic_error("Determinant is only defined for square matrices");
+    }
+
+    int n = rows_;
+    S21Matrix temp(*this);
+    double det = 1.0;
+
+    for (int i = 0; i < n; i++) {
+
+        int pivot_row = i;
+        for (int j = i + 1; j < n; j++) {
+            if (fabs(temp(j, i)) > fabs(temp(pivot_row, i))) {
+                pivot_row = j;
+            }
+        }
+
+        if (fabs(temp(pivot_row, i)) < 1e-9) {
+            return 0.0;
+        }
+
+        // Меняем строки местами, если нужно
+        if (pivot_row != i) {
+            temp.SwapRows(i, pivot_row);
+            det *= -1;  // Меняем знак детерминанта
+        }
+
+        // Приводим к верхнетреугольному виду
+        det *= temp(i, i);
+        for (int j = i + 1; j < n; j++) {
+            double factor = temp(j, i) / temp(i, i);
+            for (int k = i; k < n; k++) {
+                temp(j, k) -= factor * temp(i, k);
+            }
+        }
+    }
+
+    return det;
+}
+
+S21Matrix S21Matrix::CalcComplements() {
+    if (rows_ != cols_) {
+        throw std::invalid_argument("Matrix must be square");
+    }
+
+    S21Matrix result(rows_, cols_);  // Создаём новую матрицу дополнений
+
+    if (rows_ == 1) {
+        result(0, 0) = 1;  // Для матрицы 1x1 алгебраическое дополнение = 1
+        return result;
+    }
+
+    for (int i = 0; i < rows_; i++) {
+        for (int j = 0; j < cols_; j++) {
+            S21Matrix minor = GetMinor(*this, i, j);  // Получаем минор
+            double det = minor.Determinant();         // Вычисляем определитель минора
+            result(i, j) = det * ((i + j) % 2 == 0 ? 1 : -1);  // Умножаем на (-1)^(i+j)
+        }
+    }
+
+    return result;
+}
+
 /*==================================Opeartor overload==========================================*/
 
 S21Matrix S21Matrix::operator + (const S21Matrix &other) {
@@ -149,7 +206,6 @@ S21Matrix S21Matrix::operator * (const S21Matrix& other) {
   temp.MulMatrix(other);
     return temp;
 }
-
 
 S21Matrix S21Matrix::operator += (const S21Matrix &other) {
   (*this).SumMatrix(other);
@@ -195,6 +251,14 @@ S21Matrix S21Matrix::operator = (const S21Matrix &other) {
   return *this;
 } 
 
+double& S21Matrix:: operator () (int i, int j) {
+  return this->matrix_[i][j];
+}
+
+double S21Matrix::operator()(int i, int j) const {
+    return matrix_[i][j];
+}
+
 /*======================================Helpers================================================*/
 void S21Matrix::print_matrix () {
   for (int i = 0; i < rows_; i++) {
@@ -205,9 +269,39 @@ void S21Matrix::print_matrix () {
   }
 }
 
+void S21Matrix::filling_matrix() {
+    double count{};
+    for (int i = 0; i < rows_; i++) {
+      for (int j = 0; j < cols_; j++) { 
+        matrix_[i][j] = count;
+        count += 2;
+      }
+    }
+  }
+ 
+void S21Matrix::SwapRows(int row1, int row2) {
+    for (int j = 0; j < cols_; j++) {
+        std::swap(matrix_[row1][j], matrix_[row2][j]);
+    }
+}
+ 
+S21Matrix S21Matrix::GetMinor(const S21Matrix& matrix, int row, int col) {
+    S21Matrix minor(matrix.rows_ - 1, matrix.cols_ - 1);
+    for (int i = 0, mi = 0; i < matrix.rows_; i++) {
+        if (i == row) continue;  // Пропускаем выбранную строку
+        for (int j = 0, mj = 0; j < matrix.cols_; j++) {
+            if (j == col) continue;  // Пропускаем выбранный столбец
+            minor(mi, mj) = matrix(i, j);
+            mj++;
+        }
+        mi++;
+    }
+    return minor;
+}
+
  
 int main(void) {
-  S21Matrix A(3, 7);
+  S21Matrix A(3, 3);
   S21Matrix B(3, 3);  
   A.filling_matrix();
   B.filling_matrix();
@@ -232,5 +326,6 @@ int main(void) {
 
   // S21Matrix C = A.Transpose();
   // C.print_matrix();
+  
   return 0;
 }
