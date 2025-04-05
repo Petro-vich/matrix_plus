@@ -1,13 +1,51 @@
 #include "s21_matrix_plus.h"
 #include <iostream>
 
-
 /*=======================================SET/GET==========================================*/
 int S21Matrix::get_rows() {return this->rows_;}
 
 int S21Matrix::get_col() {return this->cols_;}
 
-void S21Matrix::set_rows(int rows) {this->rows_ = rows;}
+void S21Matrix::set_rows(int rows) {
+
+  double **temp = new double *[rows];
+    for (int i = 0; i < rows; i++) {
+      temp[i] = new double[cols_];
+      for (int j = 0; j < cols_; j++) {
+        temp[i][j] = 0.0;
+      }
+  }
+    for (int i = 0; i < rows; ++i){
+      for (int j = 0; j < this->rows_; j++) {
+        std::cout << temp[i][j];
+      }
+    putchar('\n');
+    }
+
+
+  for (int i = 0; i < this->rows_; ++i){
+    for (int j = 0; j < this->cols_; j++) {
+      temp[i][j] = this->matrix_[i][j];
+    }
+  }
+
+  for (int i = 0; i < this->rows_; ++i){
+    for (int j = 0; j < this->cols_; j++) {
+      temp[i][j] = this->matrix_[i][j];
+    }
+  }
+
+
+  for (int i = 0; i < this->rows_; i++) {
+    delete[] matrix_[i];
+  }
+  delete matrix_;
+
+  this->rows_ = rows;
+  matrix_ = temp;
+  
+}
+
 
 void S21Matrix::set_cols(int cols) {this-> rows_ = cols;}
 /*===================================Default constructor===================================*/
@@ -299,12 +337,24 @@ S21Matrix S21Matrix::GetMinor(const S21Matrix& matrix, int row, int col) {
     return minor;
 }
 
- 
+
 int main(void) {
-  S21Matrix A(3, 3);
-  S21Matrix B(3, 3);  
+  S21Matrix A(4, 4);
   A.filling_matrix();
-  B.filling_matrix();
+  A.print_matrix();
+  A.set_rows(9);
+  A.print_matrix();
+
+
+  // A.set_cols(6);
+  // S21Matrix A(0, 0);
+  // S21Matrix A(3, 3);
+  // S21Matrix B(3, 3);  
+  // A.filling_matrix();
+  // B.filling_matrix();
+  // A.print_matrix();
+  // S21Matrix C = A + B;
+  // C.print_matrix();
 
   // S21Matrix C = A + B;
   // C.print_matrix();
@@ -326,6 +376,6 @@ int main(void) {
 
   // S21Matrix C = A.Transpose();
   // C.print_matrix();
-  
+
   return 0;
 }
