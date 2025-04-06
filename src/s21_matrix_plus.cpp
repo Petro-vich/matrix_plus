@@ -61,19 +61,18 @@ S21Matrix::S21Matrix(const S21Matrix &other) :
 
 /*===================================Operations on matrices================================*/
 bool S21Matrix::EqMatrix(const S21Matrix& other) {
-  bool status;
+  bool status = 1;
   for (int i = 0; i < rows_; i++) {
     for (int j = 0; j <cols_; j++) {
       if (this->matrix_[i][j] != other.matrix_[i][j]) {
         status = 0;
         break;
-      }else{
-        status = 1;
-      }
+     }
     }
   }
   return status;
 }
+
 
 void S21Matrix::SumMatrix(const S21Matrix& other) {
   for (int i = 0; i < rows_; i++) {
@@ -260,7 +259,7 @@ S21Matrix S21Matrix::operator = (const S21Matrix &other) {
   return *this;
 } 
 
-double& S21Matrix:: operator () (int i, int j) {
+double& S21Matrix::operator()(int i, int j) {
   return this->matrix_[i][j];
 }
 
@@ -338,47 +337,38 @@ void S21Matrix::resize(int rows, int cols) {
 
 int main(void) {
   S21Matrix A(3, 3);
-  S21Matrix
+  S21Matrix B(3, 3);
   A.filling_matrix(A.matrix_size, 5.7, 2.3, 3.3,
                                   5.4, 2.2, 3.3,
                                   4.2, 4.2, 2.3);
+  B.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3,
+                                  5.4, 2.2, 3.3,
+                                  4.2, 4.2, 2.3);
 
+
+  A.set_cols(4);
   A.print_matrix();
+  putchar('\n');
+  A == B;
+  A.set_rows(4);
+  A.print_matrix();
+  putchar('\n');
+
+
+  A.set_cols(2);
+  A.print_matrix();
+  putchar('\n');
 
   A.set_rows(2);
   A.print_matrix();
-  A
 
-  // A.set_cols(6);
-  // S21Matrix A(0, 0);
-  // S21Matrix A(3, 3);
-  // S21Matrix B(3, 3);  
-  // A.filling_matrix();
-  // B.filling_matrix();
-  // A.print_matrix();
-  // S21Matrix C = A + B;
-  // C.print_matrix();
+  putchar('\n');
 
-  // S21Matrix C = A + B;
-  // C.print_matrix();
-  // S21Matrix D = A - C;
-  // D.print_matrix();
-  // S21Matrix F = A * 5.0;
-  // F.print_matrix();
-  // S21Matrix E = A * B;
-  // E.print_matrix();
+  A.set_rows(4);
+  A.set_cols(4);
 
-  // A += A;
-  // A.print_matrix();
-  // A -= B;
-  // B.print_matrix();
-  // A *= B;
-  // A.print_matrix();
-  // A *= 2;
-  // A.print_matrix();
+  A.print_matrix();
 
-  // S21Matrix C = A.Transpose();
-  // C.print_matrix();
-
+  
   return 0;
 }
