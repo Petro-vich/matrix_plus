@@ -4,50 +4,20 @@
 /*=======================================SET/GET==========================================*/
 int S21Matrix::get_rows() {return this->rows_;}
 
-int S21Matrix::get_col() {return this->cols_;}
+int S21Matrix::get_cols() {return this->cols_;} 
 
 void S21Matrix::set_rows(int rows) {
-
-  double **temp = new double *[rows];
-    for (int i = 0; i < rows; i++) {
-      temp[i] = new double[cols_];
-      for (int j = 0; j < cols_; j++) {
-        temp[i][j] = 0.0;
-      }
+  if (rows != this->rows_) {
+    resize(rows, this->cols_);
   }
-    for (int i = 0; i < rows; ++i){
-      for (int j = 0; j < this->rows_; j++) {
-        std::cout << temp[i][j];
-      }
-    putchar('\n');
-    }
-
-
-  for (int i = 0; i < this->rows_; ++i){
-    for (int j = 0; j < this->cols_; j++) {
-      temp[i][j] = this->matrix_[i][j];
-    }
-  }
-
-  for (int i = 0; i < this->rows_; ++i){
-    for (int j = 0; j < this->cols_; j++) {
-      temp[i][j] = this->matrix_[i][j];
-    }
-  }
-
-
-  for (int i = 0; i < this->rows_; i++) {
-    delete[] matrix_[i];
-  }
-  delete matrix_;
-
-  this->rows_ = rows;
-  matrix_ = temp;
-  
 }
 
 
-void S21Matrix::set_cols(int cols) {this-> rows_ = cols;}
+void S21Matrix::set_cols(int cols) {
+    if (cols != this->cols_) {
+      resize(this->rows_, cols);
+    }
+}
 /*===================================Default constructor===================================*/
 
 S21Matrix::S21Matrix() noexcept : rows_(0), cols_(0), matrix_(nullptr){
@@ -67,10 +37,11 @@ S21Matrix::~S21Matrix() {
 
   for (int i = 0; i < rows_; i++) {
     delete[] matrix_[i];
-    //std::cout << "delete " << matrix_[i] << std::endl;   
+    std::cout << "delete " << matrix_[i] << std::endl;   
   }
   delete[] matrix_;
-  //std::cout << "delete " << matrix_ << std::endl;   
+  matrix_ = nullptr;
+  std::cout << "delete " << matrix_ << std::endl;   
 
 }    
 
@@ -340,14 +311,43 @@ S21Matrix S21Matrix::GetMinor(const S21Matrix& matrix, int row, int col) {
     return minor;
 }
 
+void S21Matrix::resize(int rows, int cols) {
+  double **temp = new double *[rows];
+  for (int i = 0; i < rows; i++) {
+    temp[i] = new double[cols]{0};
+  }
+
+  for (int i = 0; i < std::min(rows, this->rows_); i++) {
+    for (int j = 0; j < std::min(cols, this-> cols_); j++) {
+      temp[i][j] = matrix_[i][j];
+    }
+  }
+  for (int i = 0; i < this->rows_; i++) {
+    delete[] matrix_[i];
+  }
+  delete[] matrix_;
+  matrix_ = nullptr;
+
+  this->rows_ = rows;
+  this->cols_ = cols;
+
+  matrix_size = rows * cols;
+  matrix_ = temp;
+  
+}
 
 int main(void) {
-  S21Matrix A(4, 4);
-  A.filling_matrix();
-  A.print_matrix();
-  A.set_rows(9);
+  S21Matrix A(3, 3);
+  S21Matrix
+  A.filling_matrix(A.matrix_size, 5.7, 2.3, 3.3,
+                                  5.4, 2.2, 3.3,
+                                  4.2, 4.2, 2.3);
+
   A.print_matrix();
 
+  A.set_rows(2);
+  A.print_matrix();
+  A
 
   // A.set_cols(6);
   // S21Matrix A(0, 0);

@@ -14,10 +14,10 @@ class S21Matrix {
 /*=======================================SET/GET==========================================*/
 
       int get_rows();
-      int get_col();
+      int get_cols();
       void set_rows(int rows);
       void set_cols(int cols);
-
+    
 /*===================================Default constructor===================================*/
       S21Matrix() noexcept;
       S21Matrix(int rows, int cols);
@@ -51,8 +51,11 @@ class S21Matrix {
       double operator()(int i, int j) const;
 /*======================================Helpers================================================*/
      void SwapRows(int row1, int row2);
+     void resize(int rows, int cols);
      void filling_matrix(int matrix_size, ...);
      void print_matrix();
+     int matrix_size = rows_ * cols_;
+     
 };
 
 #endif
