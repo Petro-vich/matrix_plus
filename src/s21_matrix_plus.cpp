@@ -307,15 +307,18 @@ void S21Matrix::print_matrix () {
   }
 }
 
-void S21Matrix::filling_matrix() {
-    double count{};
-    for (int i = 0; i < rows_; i++) {
-      for (int j = 0; j < cols_; j++) { 
-        matrix_[i][j] = count;
-        count += 2;
-      }
+void S21Matrix::filling_matrix(int matrix_size, ...) {
+  va_list arr;
+  va_start(arr, matrix_size);
+
+  for (int i = 0; i < rows_; i++) {
+    for (int j = 0; j < cols_; j++) {
+      double number = va_arg(arr, double);
+      matrix_[i][j] = number;
     }
   }
+  va_end(arr);
+}
  
 void S21Matrix::SwapRows(int row1, int row2) {
     for (int j = 0; j < cols_; j++) {
