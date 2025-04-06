@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <math.h>
-
+#include <stdarg.h>
 class S21Matrix {
   private:
       
@@ -51,7 +51,7 @@ class S21Matrix {
       double operator()(int i, int j) const;
 /*======================================Helpers================================================*/
      void SwapRows(int row1, int row2);
-     void filling_matrix();
+     void filling_matrix(int matrix_size, ...);
      void print_matrix();
 };
 
