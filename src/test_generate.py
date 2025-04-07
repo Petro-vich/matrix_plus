@@ -28,16 +28,16 @@ TEST({suite}, {matrices_func}_{test_num}) {{
     S21Matrix A({rows}, {cols});
     S21Matrix B({rows}, {cols});
     
-    A.filling_matrix({values1});
-    B.filling_matrix({values2});
+    A.filling_matrix({count_val}, {values1});
+    B.filling_matrix({count_val}, {values2});
     
     A.{matrices_func}({variable});
 
     // Ожидаемый результат
     S21Matrix expected({rows}, {cols});
-    expected.filling_matrix({expected_values});
+    expected.filling_matrix({count_val}, {expected_values});
     
-    EXPECT_EQ (0, A.EqMatrix(expected));
+    EXPECT_EQ (1, A.EqMatrix(expected));
 }}
 """
 
@@ -49,19 +49,20 @@ with open("unit_tests.cpp", "w") as f:
     for i in range(100):  # Генерируем 10 тестов
         rows = random.randint(1, 10)
         cols = random.randint(1, 10)
+        count_val = rows * cols
         # Генерация случайных значений для матриц
-        values1 = [random.uniform(-1000000000.0, 1000000000.0) for _ in range(rows * cols)]
-        values2 = [random.uniform(-1000000000.0, 1000000000.0) for _ in range(rows * cols)]
+        values1 = [random.uniform(-1000000000.0, 1000000000.0) for _ in range(count_val)]
+        values2 = [random.uniform(-1000000000.0, 1000000000.0) for _ in range(count_val)]
         
         # Складываем матрицы
         expected_values = add_matrices(values1, values2, rows, cols)
-
         # Заполнение шаблона
         f.write(test_template.format(
             suite = "S21MatrixTest_sum",
-            test_num=i, 
+            test_num=i,
             rows=rows, 
             cols=cols, 
+            count_val = count_val,
             values1=', '.join(map(str, values1)),
             values2=', '.join(map(str, values2)),
             matrices_func = "SumMatrix",
@@ -87,7 +88,8 @@ with open("unit_tests.cpp", "a") as f:
             suite = "S21MatrixTest_sum",
             test_num=i, 
             rows=rows, 
-            cols=cols, 
+            cols=cols,
+            count_val = count_val,
             values1=', '.join(map(str, values1)),
             values2=', '.join(map(str, values2)),
             matrices_func = "SubMatrix",
@@ -116,7 +118,8 @@ with open("unit_tests.cpp", "a") as f:
             suite = "S21MatrixTest_MulNumber",
             test_num=i, 
             rows=rows, 
-            cols=cols, 
+            cols=cols,
+            count_val = count_val,
             values1=', '.join(map(str, values1)),
             values2=', '.join(map(str, values2)),
             matrices_func = "MulNumber",
