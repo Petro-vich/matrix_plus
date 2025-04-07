@@ -21,5 +21,8 @@ test:
 clean:
 	rm -rf *.o
 
+clang-format:
+	clang-format -i *.cpp *.h
+
 re: clean start
 	
