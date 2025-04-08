@@ -65,8 +65,7 @@ S21Matrix::S21Matrix(S21Matrix &&other) noexcept
   other.rows_ = 0;
   other.cols_ = 0;
 }
-/*===================================Operations on
- * matrices================================*/
+/*===================================Operations on matrices================================*/
 bool S21Matrix::EqMatrix(const S21Matrix &other) {
   bool status = 1;
   for (int i = 0; i < rows_; i++) {
@@ -108,7 +107,7 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
   S21Matrix temp(this->rows_, other.cols_);
   for (int i = 0; i < temp.rows_; ++i) {
     for (int j = 0; j < temp.cols_; ++j) {
-      temp.matrix_[i][j] = 0;  // Обнуляем перед суммированием
+      temp.matrix_[i][j] = 0;
       for (int k = 0; k < this->cols_; ++k) {
         temp.matrix_[i][j] += this->matrix_[i][k] * other.matrix_[k][j];
       }
@@ -150,13 +149,12 @@ double S21Matrix::Determinant() {
       return 0.0;
     }
 
-    // Меняем строки местами, если нужно
     if (pivot_row != i) {
       temp.SwapRows(i, pivot_row);
-      det *= -1;  // Меняем знак детерминанта
+      det *= -1; 
     }
 
-    // Приводим к верхнетреугольному виду
+  
     det *= temp(i, i);
     for (int j = i + 1; j < n; j++) {
       double factor = temp(j, i) / temp(i, i);
@@ -193,8 +191,7 @@ S21Matrix S21Matrix::CalcComplements() {
   return result;
 }
 
-/*==================================Opeartor
- * overload==========================================*/
+/*==================================Opeartor overload==========================================*/
 
 S21Matrix S21Matrix::operator+(const S21Matrix &other) {
   S21Matrix temp{*this};
@@ -242,7 +239,7 @@ S21Matrix S21Matrix::operator*=(double num) {
 
 bool S21Matrix::operator==(const S21Matrix &other) { return EqMatrix(other); }
 
-S21Matrix S21Matrix::operator=(const S21Matrix &other) {
+S21Matrix& S21Matrix::operator=(const S21Matrix &other) {
   if (this != &other) {
     for (int i = 0; i < rows_; i++) {
       delete[] matrix_[i];
@@ -361,7 +358,9 @@ int main(void) {
   A.filling_matrix(A.matrix_size, 5.7, 2.3, 3.3, 5.4, 2.2, 3.3, 4.2, 4.2, 2.3);
   B.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3, 5.4, 2.2, 3.3, 4.2, 4.2, 2.3);
 
-  A = B;
+  // A = std::move(B);
+  S21Matrix C;
+  C = B = A;
   // A.SumMatrix(B);
   // A.print_matrix();
   // int res = A.EqMatrix(A);
