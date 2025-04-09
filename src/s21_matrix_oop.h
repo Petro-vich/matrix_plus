@@ -12,33 +12,28 @@ class S21Matrix {
 
  public:
   /*=======================================SET/GET==========================================*/
-
-  int get_rows();
-  int get_cols();
+  int get_rows() const noexcept;
+  int get_cols() const noexcept;
   void set_rows(int rows);
   void set_cols(int cols);
-
-  /*===================================Default
-   * constructor===================================*/
+  /*===================================Defaultconstructor===================================*/
   S21Matrix() noexcept;
   S21Matrix(int rows, int cols);
-  ~S21Matrix();
+  ~S21Matrix() noexcept;
   S21Matrix(const S21Matrix& other);
   S21Matrix(S21Matrix&& other) noexcept;
-  /*===================================Operations on
-   * matrices================================*/
-  bool EqMatrix(const S21Matrix& other);
+  /*===================================Operations on matrices================================*/
+  bool EqMatrix(const S21Matrix& other) const;
   void SumMatrix(const S21Matrix& other);
   void SubMatrix(const S21Matrix& other);
-  void MulNumber(const double num);
+  void MulNumber(const double num) noexcept;
   void MulMatrix(const S21Matrix& other);
   S21Matrix Transpose();
   double Determinant();
   S21Matrix CalcComplements();
   S21Matrix GetMinor(const S21Matrix& matrix, int row, int col);
   S21Matrix InverseMatrix();
-  /*==================================Opeartor
-   * overload==========================================*/
+  /*==================================Opeartor overload==========================================*/
   S21Matrix operator+(const S21Matrix& other);
   S21Matrix operator-(const S21Matrix& other);
   S21Matrix operator*(const S21Matrix& other);
@@ -61,6 +56,6 @@ class S21Matrix {
   void filling_matrix(int matrix_size, ...);
   void print_matrix();
   int matrix_size = rows_ * cols_;
+  void Free();
 };
-
 #endif
