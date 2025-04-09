@@ -260,11 +260,8 @@ bool S21Matrix::operator==(const S21Matrix &other) { return EqMatrix(other); }
 
 S21Matrix& S21Matrix::operator=(const S21Matrix &other) {
   if (this != &other) {
-    for (int i = 0; i < rows_; i++) {
-      delete[] matrix_[i];
+    Free();
     }
-    delete[] matrix_;
-  }
   rows_ = other.rows_;
   cols_ = other.cols_;
 
@@ -280,14 +277,8 @@ S21Matrix& S21Matrix::operator=(const S21Matrix &other) {
 
 S21Matrix &S21Matrix::operator=(S21Matrix &&other) {
   if (this != &other) {
-    // Удаляем старые данные
-    for (int i = 0; i < rows_; i++) {
-      if (matrix_[i] != nullptr) {
-        delete[] matrix_[i];
-      }
-    }
-    delete[] matrix_;
-
+    
+    Free();
     this->matrix_ = other.matrix_;
     this->rows_ = other.rows_;
     this->cols_ = other.cols_;
@@ -366,10 +357,8 @@ void S21Matrix::resize(int rows, int cols) {
       temp[i][j] = matrix_[i][j];
     }
   }
-  for (int i = 0; i < this->rows_; i++) {
-    delete[] matrix_[i];
-  }
-  delete[] matrix_;
+
+  Free();
   matrix_ = nullptr;
 
   this->rows_ = rows;
@@ -401,34 +390,7 @@ int main(void) {
                                   4.2, 4.2, 2.3,
                                   3.4, 5.3, 2.4);
 
-  A = std::move(B);
-  S21Matrix D = std::move(A); 
-  A.SumMatrix(B);
-  A.print_matrix();
-  int res = A.EqMatrix(A);
-  std::cout << res;
-
-  A.set_cols(4);
-  A.print_matrix();
-  putchar('\n');
-  A == B;
-  A.set_rows(4);
-  A.print_matrix();
-  putchar('\n');
-
-  A.set_cols(2);
-  A.print_matrix();
-  putchar('\n');
-
-  A.set_rows(2);
-  A.print_matrix();
-
-  putchar('\n');
-
-  A.set_rows(4);
-  A.set_cols(4);
-
-  A.print_matrix();
+  A = B;
 
   return 0;
 }
