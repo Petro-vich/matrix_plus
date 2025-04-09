@@ -85,7 +85,7 @@ with open("unit_tests.cpp", "a") as f:
 
         # Заполнение шаблона
         f.write(test_template.format(
-            suite = "S21MatrixTest_sum",
+            suite = "S21MatrixTest_sub",
             test_num=i, 
             rows=rows, 
             cols=cols,
