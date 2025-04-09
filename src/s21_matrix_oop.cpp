@@ -3,9 +3,9 @@
 #include <iostream>
 
 /*=======================================SET/GET==========================================*/
-int S21Matrix::get_rows() { return this->rows_; }
+int S21Matrix::get_rows() const noexcept { return this->rows_; }
 
-int S21Matrix::get_cols() { return this->cols_; }
+int S21Matrix::get_cols() const noexcept { return this->cols_; }
 
 void S21Matrix::set_rows(int rows) {
   if (rows != this->rows_) {
@@ -33,16 +33,9 @@ S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
   }
 }
 
-S21Matrix::~S21Matrix() {
+S21Matrix::~S21Matrix() noexcept {
   std::cout << "Calling dectructinon" << this << '\n';
-
-  for (int i = 0; i < rows_; i++) {
-    delete[] matrix_[i];
-    std::cout << "delete " << matrix_[i] << std::endl;
-  }
-  delete[] matrix_;
-  matrix_ = nullptr;
-  std::cout << "delete " << matrix_ << std::endl;
+  Free();
 }
 
 S21Matrix::S21Matrix(const S21Matrix &other)
@@ -61,12 +54,13 @@ S21Matrix::S21Matrix(const S21Matrix &other)
 
 S21Matrix::S21Matrix(S21Matrix &&other) noexcept
     : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) {
+  std::cout << "calling constructions MOVE " << this;
   other.matrix_ = nullptr;
   other.rows_ = 0;
   other.cols_ = 0;
 }
 /*===================================Operations on matrices================================*/
-bool S21Matrix::EqMatrix(const S21Matrix &other) {
+bool S21Matrix::EqMatrix(const S21Matrix &other) const {
   bool status = 1;
   for (int i = 0; i < rows_; i++) {
     for (int j = 0; j < cols_; j++) {
@@ -80,6 +74,10 @@ bool S21Matrix::EqMatrix(const S21Matrix &other) {
 }
 
 void S21Matrix::SumMatrix(const S21Matrix &other) {
+  if (this->rows_ != other.rows_ || this->cols_ != other.cols_) {
+    throw std::invalid_argument("The matrices are not equal");
+  }
+  
   for (int i = 0; i < rows_; i++) {
     for (int j = 0; j < cols_; j++) {
       this->matrix_[i][j] += other.matrix_[i][j];
@@ -88,6 +86,10 @@ void S21Matrix::SumMatrix(const S21Matrix &other) {
 }
 
 void S21Matrix::SubMatrix(const S21Matrix &other) {
+  if (this->rows_ != other.rows_ || this->cols_ != other.cols_) {
+    throw std::invalid_argument("The matrices are not equal");
+  }
+
   for (int i = 0; i < rows_; i++) {
     for (int j = 0; j < cols_; j++) {
       this->matrix_[i][j] -= other.matrix_[i][j];
@@ -95,7 +97,7 @@ void S21Matrix::SubMatrix(const S21Matrix &other) {
   }
 }
 
-void S21Matrix::MulNumber(const double num) {
+void S21Matrix::MulNumber(const double num) noexcept{
   for (int i = 0; i < rows_; i++) {
     for (int j = 0; j < cols_; j++) {
       this->matrix_[i][j] *= num;
@@ -104,6 +106,10 @@ void S21Matrix::MulNumber(const double num) {
 }
 
 void S21Matrix::MulMatrix(const S21Matrix &other) {
+  if (this->cols_ != other.get_rows()) {
+    throw std::invalid_argument("The number of columns of the first matrix must not match the number of rows of the second matrix");
+  }
+  
   S21Matrix temp(this->rows_, other.cols_);
   for (int i = 0; i < temp.rows_; ++i) {
     for (int j = 0; j < temp.cols_; ++j) {
@@ -189,6 +195,19 @@ S21Matrix S21Matrix::CalcComplements() {
   }
 
   return result;
+}
+
+S21Matrix S21Matrix::InverseMatrix() {
+  if (rows_ != cols_) {
+    throw std::logic_error("Incorrect matrix size for Inverse");
+  }
+
+  double det = Determinant();
+
+  if (fabs(det) < 1e-7) {
+    throw std::logic_error("Determinant must be non-zero to calculate inverse");
+  }
+  return Transpose().CalcComplements() * (1.0 / det);
 }
 
 /*==================================Opeartor overload==========================================*/
@@ -281,9 +300,17 @@ S21Matrix &S21Matrix::operator=(S21Matrix &&other) {
   return *this;
 }
 
-double &S21Matrix::operator()(int i, int j) { return this->matrix_[i][j]; }
+double &S21Matrix::operator()(int i, int j) { 
+  if (i >= rows_ || j >= cols_ || i < 0 || j < 0) {
+    throw std::out_of_range("Incorrect input for (), index is out of range.");
+  }
+  return this->matrix_[i][j]; }
 
-double S21Matrix::operator()(int i, int j) const { return matrix_[i][j]; }
+double S21Matrix::operator()(int i, int j) const { 
+    if (i >= rows_ || j >= cols_ || i < 0 || j < 0) {
+    throw std::out_of_range("Incorrect input for (), index is out of range.");
+  }
+  return matrix_[i][j]; }
 
 /*======================================Helpers================================================*/
 void S21Matrix::print_matrix() {
@@ -352,41 +379,56 @@ void S21Matrix::resize(int rows, int cols) {
   matrix_ = temp;
 }
 
+void S21Matrix::Free() {
+  for (int i = 0; i < rows_; i++) {
+    delete[] matrix_[i];
+  }
+  delete[] matrix_;
+  matrix_ = nullptr;
+  std::cout << "the matrix has been deleted: " << matrix_ << std::endl;
+}
+
 int main(void) {
   S21Matrix A(3, 3);
   S21Matrix B(3, 3);
-  A.filling_matrix(A.matrix_size, 5.7, 2.3, 3.3, 5.4, 2.2, 3.3, 4.2, 4.2, 2.3);
-  B.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3, 5.4, 2.2, 3.3, 4.2, 4.2, 2.3);
+  A.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3,
+                                  5.4, 2.2, 3.3,
+                                  4.2, 4.2, 2.3,
+                                  3.4, 5.3, 2.4);
+  
+  B.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3,
+                                  5.4, 2.2, 3.3,
+                                  4.2, 4.2, 2.3,
+                                  3.4, 5.3, 2.4);
 
-  // A = std::move(B);
-  S21Matrix C;
-  C = B = A;
-  // A.SumMatrix(B);
-  // A.print_matrix();
-  // int res = A.EqMatrix(A);
-  // std::cout << res;
+  A = std::move(B);
+  S21Matrix D = std::move(A); 
+  A.SumMatrix(B);
+  A.print_matrix();
+  int res = A.EqMatrix(A);
+  std::cout << res;
 
-  // A.set_cols(4);
-  // A.print_matrix();
-  // putchar('\n');
-  // A == B;
-  // A.set_rows(4);
-  // A.print_matrix();
-  // putchar('\n');
+  A.set_cols(4);
+  A.print_matrix();
+  putchar('\n');
+  A == B;
+  A.set_rows(4);
+  A.print_matrix();
+  putchar('\n');
 
-  // A.set_cols(2);
-  // A.print_matrix();
-  // putchar('\n');
+  A.set_cols(2);
+  A.print_matrix();
+  putchar('\n');
 
-  // A.set_rows(2);
-  // A.print_matrix();
+  A.set_rows(2);
+  A.print_matrix();
 
-  // putchar('\n');
+  putchar('\n');
 
-  // A.set_rows(4);
-  // A.set_cols(4);
+  A.set_rows(4);
+  A.set_cols(4);
 
-  // A.print_matrix();
+  A.print_matrix();
 
   return 0;
 }
