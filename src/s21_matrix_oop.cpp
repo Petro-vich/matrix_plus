@@ -61,11 +61,15 @@ S21Matrix::S21Matrix(S21Matrix &&other) noexcept
 }
 /*===================================Operations on matrices================================*/
 bool S21Matrix::EqMatrix(const S21Matrix &other) const {
-  bool status = 1;
+  if (rows_ != other.rows_ || cols_ != other.cols_) {
+    return false;
+  }
+  
+  bool status = true;
   for (int i = 0; i < rows_; i++) {
     for (int j = 0; j < cols_; j++) {
       if (this->matrix_[i][j] != other.matrix_[i][j]) {
-        status = 0;
+        status = false;
         break;
       }
     }
@@ -131,6 +135,7 @@ S21Matrix S21Matrix::Transpose() {
       temp.matrix_[j][i] = this->matrix_[i][j];
     }
   }
+  
   return temp;
 }
 
@@ -311,6 +316,7 @@ void S21Matrix::print_matrix() {
     }
     putchar('\n');
   }
+  putchar('\n');
 }
 
 void S21Matrix::filling_matrix(int matrix_size, ...) {
@@ -377,20 +383,12 @@ void S21Matrix::Free() {
   std::cout << "the matrix has been deleted: " << matrix_ << std::endl;
 }
 
-int main(void) {
-  S21Matrix A(3, 3);
-  S21Matrix B(3, 3);
-  A.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3,
-                                  5.4, 2.2, 3.3,
-                                  4.2, 4.2, 2.3,
-                                  3.4, 5.3, 2.4);
-  
-  B.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3,
-                                  5.4, 2.2, 3.3,
-                                  4.2, 4.2, 2.3,
-                                  3.4, 5.3, 2.4);
+// int main(void) {
 
-  A = B;
+//   S21Matrix A(28, 7);
+//   S21Matrix B(28, 7);
+//   S21Matrix C(28, 7);
 
-  return 0;
-}
+//   const S21Matrix cmat = 
+//   double val = cmat(1, 1);
+// }
