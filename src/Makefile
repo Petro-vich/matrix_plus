@@ -69,7 +69,7 @@ clang-format:
 	@clang-format -i *.cpp *.h
 
 clean:
-	rm -rf  $(CLEAN_LIST) coverage_report tests/test $(TARGET) $(TARGET)
+	rm -rf  $(CLEAN_LIST) coverage_report tests/test $(TARGET) $(TARGET) s21_matrix_oop
 	clear
 	@printf "$(GREEN)--->CLEARING ALL FILES $(RESET)\n"
 
