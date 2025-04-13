@@ -73,3 +73,68 @@ TEST(S21MatrixTest_transponce, transponce_0) {
   EXPECT_TRUE(B == Expected);
 
 }
+
+TEST(S21MatrixTest_EqMatrix, Eq_Matrix_0) {
+  S21Matrix A(3, 1);
+  S21Matrix B(3, 2);
+
+  EXPECT_EQ(false, A == B);
+  EXPECT_EQ(false, A.EqMatrix(B));
+
+
+}
+
+TEST(S21MatrixTest_SumMatrix, Sum_Matrix_0) {
+  S21Matrix A(3, 2);
+  S21Matrix B(3, 3);
+
+  EXPECT_THROW(A + B, std::invalid_argument);
+  EXPECT_THROW(A.SumMatrix(B), std::invalid_argument);
+
+}
+
+TEST(S21MatrixTest_SumMatrix, Sub_Matrix_0) {
+  S21Matrix A(3, 2);
+  S21Matrix B(3, 3);
+
+  EXPECT_THROW(A - B, std::invalid_argument);
+  EXPECT_THROW(A.SubMatrix(B), std::invalid_argument);
+
+}
+
+TEST(S21MatrixTest_SumMatrix, Mul_Matrix_0) {
+  S21Matrix A(3, 2);
+  S21Matrix B(3, 3);
+
+  EXPECT_THROW(A * B, std::invalid_argument);
+}
+
+TEST(S21MatrixTest_SumMatrix, Mul_Matrix_1) {
+
+  S21Matrix A(3, 3);
+  S21Matrix B(3, 3);
+  A.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3,
+                                  5.4, 2.2, 3.3,
+                                  4.2, 4.2, 2.3,
+                                  3.4, 5.3, 2.4);
+  
+  B.filling_matrix(A.matrix_size, 3.7, 2.3, 3.3,
+                                  5.4, 2.2, 3.3,
+                                  4.2, 4.2, 2.3,
+                                  3.4, 5.3, 2.4);
+
+
+  EXPECT_NO_THROW(S21Matrix C = A * B);
+  EXPECT_NO_THROW(A *= B);
+  
+
+}
+
+TEST(S21MatrixTest_Brackets, Brackets_0) {
+  S21Matrix A(3, 2);
+  const S21Matrix B(3, 3);
+
+  EXPECT_THROW(A(5, 5), std::out_of_range);
+  EXPECT_THROW(B(5, 5), std::out_of_range);
+}
+
