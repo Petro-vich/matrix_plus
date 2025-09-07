@@ -10,6 +10,47 @@ TEST(S21MatrixTest_EqMatrix, EqMatrix_0) {
     EXPECT_FALSE (A == B);
 }
 
+// Precision tests for EqMatrix with 1e-6 tolerance
+TEST(S21MatrixTest_EqMatrix, Precision_EqualWithin1e6) {
+    S21Matrix A(2, 2);
+    S21Matrix B(2, 2);
+
+    A.filling_matrix(4, 1.0, 2.0, 3.0, 4.0);
+    B.filling_matrix(4, 1.0 + 1e-7, 2.0 - 5e-7, 3.0 + 9e-7, 4.0 - 1e-7);
+
+    EXPECT_TRUE(A == B);
+}
+
+TEST(S21MatrixTest_EqMatrix, Precision_NotEqualBeyond1e6) {
+    S21Matrix A(2, 2);
+    S21Matrix B(2, 2);
+
+    A.filling_matrix(4, 1.0, 2.0, 3.0, 4.0);
+    B.filling_matrix(4, 1.0 + 1e-5, 2.0, 3.0, 4.0);
+
+    EXPECT_FALSE(A == B);
+}
+
+TEST(S21MatrixTest_EqMatrix, Precision_MixedCloseAndFar) {
+    S21Matrix A(2, 2);
+    S21Matrix B(2, 2);
+
+    A.filling_matrix(4, 10.0, -10.0, 0.0, 1e6);
+    B.filling_matrix(4, 10.0 + 2e-7, -10.0 - 9e-7, 5e-7, 1e6 + 1e-5);
+
+    EXPECT_FALSE(A == B);
+}
+
+TEST(S21MatrixTest_EqMatrix, Precision_DifferentSizes) {
+    S21Matrix A(2, 3);
+    S21Matrix B(3, 2);
+
+    A.filling_matrix(6, 1,2,3,4,5,6);
+    B.filling_matrix(6, 1,2,3,4,5,6);
+
+    EXPECT_FALSE(A == B);
+}
+
 
 TEST(S21MatrixTest_EqMatrix, EqMatrix_1) {
     S21Matrix A(10, 22);
